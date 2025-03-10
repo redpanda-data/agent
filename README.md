@@ -1,2 +1,2 @@
 # agent
-best developer experience in the west
+unreasonably good developer experience for enterprise agents
