@@ -1,0 +1,36 @@
+name: CI
+on:
+  pull_request:
+    paths:
+      - '**.py'
+  push:
+    branches: [main]
+    paths:
+      - '**.py'
+jobs:
+  ci:
+    strategy:
+      matrix:
+        variant: 
+          - name: 'Run Pyright'
+            task: 'pyright'
+          - name: 'Run Pytest'
+            task: 'tests'
+          - name: 'Run Ruff'
+            task: 'lint'
+    name: ${{ matrix.variant.name }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Install Task
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          # Heavy usage of the action can result in workflow run failures caused by rate limiting.
+          # GitHub provides a more generous allowance for Authenticated API requests.
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: ${{ matrix.variant.name }}
+        run: task ${{ matrix.variant.task }}
