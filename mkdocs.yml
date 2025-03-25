@@ -1,0 +1,72 @@
+site_name: Redpanda Agents
+theme:
+  name: material
+  features:
+    # Allows copying code blocks
+    - content.code.copy
+    # Allows selecting code blocks
+    - content.code.select
+    # Shows the current path in the sidebar
+    - navigation.path
+    # Shows sections in the sidebar
+    - navigation.sections
+    # Shows sections expanded by default
+    - navigation.expand
+    # Enables annotations in code blocks
+    - content.code.annotate
+  palette:
+    primary: red
+  logo: assets/logo.svg
+  favicon: assets/logo.svg
+
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["src/agents"]
+          options:
+            docstring_style: google
+            # Shows links to other members in signatures
+            signature_crossrefs: true
+            # Orders members by source order, rather than alphabetical
+            members_order: source
+            # Puts the signature on a separate line from the member name
+            separate_signature: true
+            # Shows type annotations in signatures
+            show_signature_annotations: true
+            # Makes the font sizes nicer
+            heading_level: 3
+
+extra:
+  # Remove material generation message in footer
+  generator: false
+
+
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
+
+watch:
+  - "src/agents"
