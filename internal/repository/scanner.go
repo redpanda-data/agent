@@ -2,6 +2,7 @@ package repository
 
 import (
 	"io/fs"
+	"os"
 	"path/filepath"
 )
 
@@ -10,7 +11,7 @@ import (
 type Scanner struct {
 	fs fs.FS
 
-	onResource func(resourceType string, filename string, contents []byte) error
+	onResource func(resourceType string, filePath string, contents []byte) error
 }
 
 // NewScanner creates a new scanner with defaults.
@@ -22,13 +23,13 @@ func NewScanner(fs fs.FS) *Scanner {
 
 // OnResourceFile registers a closure to be called for each resource file
 // encountered by the scanner.
-func (s *Scanner) OnResourceFile(fn func(resourceType string, filename string, contents []byte) error) {
+func (s *Scanner) OnResourceFile(fn func(resourceType string, filePath string, contents []byte) error) {
 	s.onResource = fn
 }
 
 func (s *Scanner) scanResourceTypeFn(rtype string) fs.WalkDirFunc {
 	return func(path string, d fs.DirEntry, err error) error {
-		if d.IsDir() {
+		if d != nil && d.IsDir() {
 			return nil
 		}
 
@@ -37,7 +38,7 @@ func (s *Scanner) scanResourceTypeFn(rtype string) fs.WalkDirFunc {
 			return err
 		}
 
-		return s.onResource(rtype, filepath.Base(path), contents)
+		return s.onResource(rtype, path, contents)
 	}
 }
 
@@ -49,7 +50,13 @@ func (s *Scanner) Scan(root string) error {
 
 		// Caches
 		targetDir := filepath.Join(resourceDir, "caches")
-		if err := fs.WalkDir(s.fs, targetDir, s.scanResourceTypeFn("cache")); err != nil {
+		if err := fs.WalkDir(s.fs, targetDir, s.scanResourceTypeFn("cache")); err != nil && !os.IsNotExist(err) {
+			return err
+		}
+
+		// Processors
+		targetDir = filepath.Join(resourceDir, "processors")
+		if err := fs.WalkDir(s.fs, targetDir, s.scanResourceTypeFn("processor")); err != nil && !os.IsNotExist(err) {
 			return err
 		}
 	}

@@ -1,5 +1,6 @@
 redis:
   url: localhost://:6379
 meta:
-  rp_mcp: no
+  mcp:
+    name: my cache of meows
 

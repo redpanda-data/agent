@@ -1,0 +1,7 @@
+label: cachedir
+file:
+  directory: ./cachedir
+meta:
+  mcp:
+    name: pet thoughts
+
