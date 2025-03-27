@@ -1,0 +1,8 @@
+label: project_directory_file_contents
+file:
+  directory: "${PROJECT_DIR}"
+
+meta:
+  mcp:
+    enabled: true
+    description: "the project directory where the user stores files"
