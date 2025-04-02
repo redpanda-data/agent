@@ -3,7 +3,7 @@ import os
 import pytest
 from pydantic import BaseModel
 
-import agents
+from redpanda import agents
 
 
 class MyModel(BaseModel):
