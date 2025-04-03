@@ -2,6 +2,16 @@
 
 unreasonably good developer experience for enterprise agents
 
+### Check Out the Latest AI Goodies on YouTube
+
+MCP Demo:
+
+[![MCP Demo](https://img.youtube.com/vi/JhF8HMpVmus/0.jpg)](https://www.youtube.com/watch?v=JhF8HMpVmus)
+
+Agentic AI Demo:
+
+[![Agentic AI Demo](https://img.youtube.com/vi/oi8qgtTqQRU/0.jpg)](https://www.youtube.com/watch?v=oi8qgtTqQRU)
+
 # roadmap progress
 
 - ✅ integration with redpanda mcp server
