@@ -1,0 +1,23 @@
+name: Deploy Documentation
+on:
+  push:
+    branches:
+      - main
+permissions:
+  contents: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Configure Git Credentials
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Install Task
+        uses: arduino/setup-task@v2
+      - name: Deploy Documentation
+        run: task deploy-docs
