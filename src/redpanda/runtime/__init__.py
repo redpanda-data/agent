@@ -19,6 +19,14 @@ from redpanda.runtime._grpc import RuntimeServer, serve_main
 
 
 async def serve(agent: Agent) -> None:
+    """
+    Serve an agent as a Redpanda Connect processor plugin.
+
+    This method runs for the entire lifetime of the server.
+
+    Args:
+        agent: The agent to serve.
+    """
     addr = os.getenv("REDPANDA_CONNECT_AGENT_RUNTIME_MCP_SERVER")
     if addr:
         agent.mcp.append(SSEMCPEndpoint(addr))

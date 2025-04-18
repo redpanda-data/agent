@@ -25,7 +25,8 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
-          paths: ["src/agents"]
+          paths: 
+            - "src/redpanda"
           options:
             docstring_style: google
             # Shows links to other members in signatures
@@ -69,4 +70,4 @@ validation:
   anchors: warn
 
 watch:
-  - "src/agents"
+  - "src/redpanda"
