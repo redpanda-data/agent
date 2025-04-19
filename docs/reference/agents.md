@@ -1,0 +1,3 @@
+# Agents module
+
+::: redpanda.agents

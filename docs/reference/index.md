@@ -1,3 +1,0 @@
-# Agents module
-
-::: agents

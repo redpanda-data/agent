@@ -18,6 +18,8 @@ jobs:
             task: 'tests'
           - name: 'Run Ruff'
             task: 'lint'
+          - name: 'Build docs'
+            task: 'build-docs'
     name: ${{ matrix.variant.name }}
     runs-on: ubuntu-latest
     steps:
