@@ -91,7 +91,7 @@ This all happens behind the scenes, so your Agent can focus on logic instead of 
 
 ## 5. Where the RuntimeServer Code Lives
 
-The core code for RuntimeServer can be found in [src/redpanda/runtime/_grpc.py](../src/redpanda/runtime/_grpc.py). If you open it, you’ll see something like this (shortened and simplified):
+The core code for RuntimeServer can be found in [src/redpanda/runtime/_grpc.py](https://github.com/redpanda-data/agent/blob/main/src/redpanda/runtime/_grpc.py). If you open it, you’ll see something like this (shortened and simplified):
 
 ```python
 # (Simplified) runtime/_grpc.py

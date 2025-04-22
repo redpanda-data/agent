@@ -102,7 +102,7 @@ sequenceDiagram
 
 ## 5. Peeking at the Internal Implementation
 
-Internally, the Agent’s code (in [src/redpanda/agents/_agent.py](../src/redpanda/agents/_agent.py)) calls these callbacks at specific times:
+Internally, the Agent’s code (in [src/redpanda/agents/_agent.py](https://github.com/redpanda-data/agent/blob/main/src/redpanda/agents/_agent.py)) calls these callbacks at specific times:
 
 1. on_start(...) before the Agent begins (great for resetting logs or counters).  
 2. on_tool_start(...) when a Tool is about to run.  

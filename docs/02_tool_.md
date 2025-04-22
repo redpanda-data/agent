@@ -133,7 +133,7 @@ sequenceDiagram
 
 ## 6. A Quick Peek at the Implementation
 
-In the source code ([src/redpanda/agents/_tools.py](../src/redpanda/agents/_tools.py)), the `Tool` base class looks roughly like this (simplified):
+In the source code ([src/redpanda/agents/_tools.py](https://github.com/redpanda-data/agent/blob/main/src/redpanda/agents/_tools.py)), the `Tool` base class looks roughly like this (simplified):
 
 ```python
 class Tool:

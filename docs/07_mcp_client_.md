@@ -105,7 +105,7 @@ Explanation:
 
 ## 5. A Peek at the Internal Implementation
 
-Here’s a shortened version of the `mcp_client` function as found in [src/redpanda/agents/_mcp.py](../src/redpanda/agents/_mcp.py). Notice how it handles different Endpoint types (like standard I/O, SSE, or WebSocket) with the same base protocol:
+Here’s a shortened version of the `mcp_client` function as found in [src/redpanda/agents/_mcp.py](https://github.com/redpanda-data/agent/blob/main/src/redpanda/agents/_mcp.py). Notice how it handles different Endpoint types (like standard I/O, SSE, or WebSocket) with the same base protocol:
 
 ```python
 @asynccontextmanager

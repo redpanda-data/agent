@@ -139,7 +139,7 @@ sequenceDiagram
 
 ## 6. Under the Hood in the Code
 
-In [src/redpanda/agents/_tools.py](../src/redpanda/agents/_tools.py), you’ll see code defining:
+In [src/redpanda/agents/_tools.py](https://github.com/redpanda-data/agent/blob/main/src/redpanda/agents/_tools.py), you’ll see code defining:
 - `ToolResponse`, which has a list of content items.  
 - `ToolResponseTextContent`, representing text.  
 - `ToolResponseImageContent`, representing a base64-encoded image.

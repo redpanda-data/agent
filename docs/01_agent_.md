@@ -88,7 +88,7 @@ When Tools and Hooks are involved, the diagram gains extra steps, but this is th
 
 ## 5. Inside the Code (A Peek Under the Hood)
 
-The main code for the Agent is in [src/redpanda/agents/_agent.py](../src/redpanda/agents/_agent.py). Key points:
+The main code for the Agent is in [src/redpanda/agents/_agent.py](https://github.com/redpanda-data/agent/blob/main/src/redpanda/agents/_agent.py). Key points:
 
 - The `Agent` class has a `run(...)` method that orchestrates the conversation flow.  
 - If there are Tools, the Agent can detect when the model wants to call them and handle that automatically.  

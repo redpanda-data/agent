@@ -85,7 +85,7 @@ sequenceDiagram
 
 ## 4. Under the Hood
 
-Behind the scenes, MCPEndpoint is just an agreement for how to connect. Let’s see a tiny peek inside the file [src/redpanda/agents/_mcp.py](../src/redpanda/agents/_mcp.py). Don’t worry if it looks advanced—this is just to show how it fits together.
+Behind the scenes, MCPEndpoint is just an agreement for how to connect. Let’s see a tiny peek inside the file [src/redpanda/agents/_mcp.py](https://github.com/redpanda-data/agent/blob/main/src/redpanda/agents/_mcp.py). Don’t worry if it looks advanced—this is just to show how it fits together.
 
 ```python
 class MCPEndpoint:

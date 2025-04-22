@@ -77,7 +77,7 @@ sequenceDiagram
 
 ## 4. Under the Hood
 
-RPKMCPEndpoint is simply a subclass of [StdioMCPEndpoint](05_mcpendpoint_.md#simple-use-case) with the command and arguments set to `"rpk connect mcp-server"`. Here’s a simplified look (shortened for clarity) in [src/redpanda/agents/_mcp.py](../src/redpanda/agents/_mcp.py):
+RPKMCPEndpoint is simply a subclass of [StdioMCPEndpoint](05_mcpendpoint_.md#simple-use-case) with the command and arguments set to `"rpk connect mcp-server"`. Here’s a simplified look (shortened for clarity) in [src/redpanda/agents/_mcp.py](https://github.com/redpanda-data/agent/blob/main/src/redpanda/agents/_mcp.py):
 
 ```python
 class RPKMCPEndpoint(StdioMCPEndpoint):
