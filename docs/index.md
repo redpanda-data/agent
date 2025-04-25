@@ -1,21 +1,4 @@
-# Welcome to MkDocs
-
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
-
-## Commands
-
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
-
+# Redpanda Agents
 
 **This project** provides a flexible system where an *Agent* can answer questions and use specialized *Tools* to tackle tasks. 
 The Agent can also connect to external services through different **MCPEndpoints**, letting it integrate with remote or local resources. 
@@ -24,8 +7,6 @@ A **RuntimeServer** exposes the Agent over gRPC, so outside applications can int
 The project includes *hooks* to track key events (like before or after a tool is called) and a *ToolResponse* structure for sending back text or images neatly. 
 
 The **RPKMCPEndpoint** even simplifies testing by running a local command to simulate a server inside your development folder.
-
-
 
 ## Chapters
 
@@ -45,7 +26,6 @@ The **RPKMCPEndpoint** even simplifies testing by running a local command to sim
 ](07_mcp_client_.md)
 8. [RuntimeServer
 ](08_runtimeserver_.md)
-
 
 ---
 

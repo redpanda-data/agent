@@ -1,0 +1,20 @@
+agents:
+  # The key here determines where the agent entrypoint is found: "agents/redleader.py"
+  redleader:
+    # Define how your agent recieves input
+    input:
+      redpanda:
+        seed_brokers: ["localhost:9092"]
+        topics: ["agent_input"]
+        consumer_group: "redleader_cg"
+      processors:
+        - log:
+            message: "${!content().string()}"
+    # Define the tools your agent has access too
+    tools:
+      - search_gdrive
+    # Define where the agent's output goes
+    output:
+      redpanda:
+        seed_brokers: ["localhost:9092"]
+        topic: "agent_output"
