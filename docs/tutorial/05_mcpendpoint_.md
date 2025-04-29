@@ -12,7 +12,6 @@ For example:
 • You can connect via standard input/output (like launching a program and talking with it).  
 • You can connect via Server-Sent Events (SSE).  
 • You can connect via WebSocket.  
-• Or you can do something more specialized like RPKMCPEndpoint (we’ll see that in [Chapter 6: RPKMCPEndpoint](06_rpkmcpendpoint_.md)).
 
 Think of MCPEndpoint as the base blueprint. Different subclasses (e.g., StdioMCPEndpoint, SSEMCPEndpoint, WebsocketMCPEndpoint) each handle one style of communication.
 
@@ -149,4 +148,4 @@ Explanation:
 • Different subclasses handle different connection methods: Stdio, SSE, WebSocket, etc.  
 • You gain the flexibility of calling local or remote Tools in a uniform way.
 
-Now that you’ve seen the basic Endpoint, let’s explore a special variation that launches a local process for you: the [RPKMCPEndpoint](06_rpkmcpendpoint_.md). This can be handy when you want to bundle the server’s logic right with your Agent without hosting externally. Get ready for the next step!
+Next time, we’ll look more closely at [mcp_client](07_mcp_client_.md), which is the library helper that actually does most of the handshake and messaging between your Python code and the server. You’ll see how it all fits together behind the scenes!

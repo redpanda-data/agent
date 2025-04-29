@@ -1,6 +1,6 @@
-# Chapter 7: mcp_client
+# Chapter 6: mcp_client
 
-In the previous chapter, [RPKMCPEndpoint](06_rpkmcpendpoint_.md), we saw how an Agent can spin up a local MCP process using the “rpk connect mcp-server” command. Now, let's explore the core function that actually sets up the conversation with any MCP server—whether it’s local, remote, using Standard I/O, SSE, or WebSocket:
+In the [previous chapter: MCPEndpoint](05_mcpendpoint_.md), you learned how an Agent can communicate with external servers or local processes using different connection methods. Now, let's explore the core function that actually sets up the conversation with any MCP server—whether it’s local, remote, using Standard I/O, SSE, or WebSocket:
 
 • The function name: `mcp_client`  
 • Purpose: Creates a temporary communication channel to an MCP server.  
