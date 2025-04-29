@@ -9,7 +9,7 @@ agents:
         consumer_group: "redleader_cg"
       processors:
         - log:
-            message: "${!content().string()}"
+            message: "MESSAGE: ${!content().string()}"
     # Define the tools your agent has access too
     tools:
       - search_gdrive

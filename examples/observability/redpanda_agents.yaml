@@ -1,0 +1,14 @@
+agents:
+  weather:
+    input:
+      stdin: {}
+    tools:
+      - check_weather
+    output:
+      stdout: {}
+    tracer:
+      open_telemetry_collector:
+        service: rp-agent
+        grpc:
+          - address: localhost:4317
+            secure: false

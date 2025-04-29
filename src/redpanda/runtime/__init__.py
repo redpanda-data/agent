@@ -21,6 +21,7 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
 from redpanda.agents import Agent, SSEMCPEndpoint
+
 from ._grpc import RuntimeServer, serve_main
 from ._otel import PassthroughTraceCollector
 

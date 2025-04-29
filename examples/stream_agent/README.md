@@ -1,20 +1,13 @@
-# Redpanda Agents
+# Redpanda Agent
 
-This is a project generated from Redpanda Connect's agentic developer framework.
+This is an example agent that showcases how you can leverage a message broker as a an input/output for an agent (as well as any of Redpanda Connect's other input or output components).
 
-You can define new agents in the `agents` folder as python, and hook them up to
-[`inputs`][inputs] and [`outputs`][outputs] using Redpanda Connect.
+You can run this agent via:
 
-Each agent can also be given a set of tools (exposed over MCP) as [resources][resources].
+```
+rpk container start
+rpk topic create agent_input agent_output
+rpk connect agent run .
+```
 
-To showcase each of these, there is an example weather agent, that processes messages
-from `stdin` and writes it's output to `stdout` using an example `http` processor tool
-to lookup the weather in a given location.
-
-Running this example requires [`uv`](https://docs.astral.sh/uv/) to be installed on the
-host. Then you can run the agent using `rpk connect agent run`.
-
-[inputs]: https://docs.redpanda.com/redpanda-connect/components/inputs/about/
-[outputs]: https://docs.redpanda.com/redpanda-connect/components/outputs/about/
-[resources]: https://docs.redpanda.com/redpanda-connect/configuration/resources/
-
+Then you can give input to the agent using `rpk topic produce agent_input`, and see the agent's output via `rpk topic consume agent_output`. Using Redpanda as a message broker allows you to replay, resume messages in multi-agent systems.

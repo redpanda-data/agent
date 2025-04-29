@@ -12,16 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from contextlib import asynccontextmanager
-from opentelemetry import trace
-from typing import Any, override
 import json
+from contextlib import asynccontextmanager
+from typing import Any, override
 
 from mcp import ClientSession, Tool as MCPToolDef
 from mcp.client.sse import sse_client
 from mcp.client.stdio import StdioServerParameters, stdio_client
 from mcp.client.websocket import websocket_client
 from mcp.shared.exceptions import McpError
+from opentelemetry import trace
 
 from ._tools import Tool, ToolResponse, ToolResponseImageContent, ToolResponseTextContent
 
@@ -184,7 +184,7 @@ class MCPTool(Tool):
 
     @override
     async def __call__(self, args: dict[str, Any]) -> Any:
-        with trace.get_tracer("redpanda.agents").start_as_current_span("tool_call") as span:
+        with trace.get_tracer("redpanda.mcp").start_as_current_span("tool_call") as span:
             span.set_attribute("name", self.name)
             span.set_attribute("arguments", json.dumps(args))
             return await self._client.call_tool(self.name, args)
