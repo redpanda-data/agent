@@ -73,7 +73,7 @@ def convert_spans(spans: list[tracesdk.ReadableSpan]) -> list[pb.Span]:
     by_parent_id: dict[int, list[tracesdk.ReadableSpan]] = {}
     for span in spans:
         parent = span.parent
-        if parent is None:
+        if parent is None or parent.is_remote:
             roots.append(span)
             continue
         children = by_parent_id.get(parent.span_id, [])

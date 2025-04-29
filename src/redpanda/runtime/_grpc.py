@@ -98,7 +98,7 @@ class RuntimeServer(grpcpb.RuntimeServicer):
                 payload = _serialize_payload(request.message.structured)
             else:
                 payload = request.message.serialized.decode("utf-8")
-            with self.tracer.start_as_current_span("agent_invoke", context=trace_ctx) as span:
+            with self.tracer.start_as_current_span("agent_invoke", context=trace_ctx):
                 output = await self.agent.run(input=payload)
             if isinstance(output, BaseModel):
                 output = output.model_dump_json()
