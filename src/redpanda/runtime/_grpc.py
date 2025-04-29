@@ -22,10 +22,14 @@ import grpc  # pyright: ignore[reportMissingTypeStubs]
 import grpc.aio  # pyright: ignore[reportMissingTypeStubs]
 from grpc_health.v1 import health_pb2, health_pb2_grpc  # pyright: ignore[reportMissingTypeStubs]
 from grpc_health.v1.health import HealthServicer  # pyright: ignore[reportMissingTypeStubs]
+from opentelemetry import trace
+from opentelemetry.sdk import trace as tracesdk
 from pydantic import BaseModel
 
 from redpanda.agents import Agent
 from redpanda.runtime.proto import runtime_pb2 as pb, runtime_pb2_grpc as grpcpb
+
+from ._otel import convert_spans, current_spans_context_var
 
 
 def _serialize_payload(payload: pb.Value) -> str:
@@ -65,9 +69,11 @@ def _serialize_payload(payload: pb.Value) -> str:
 
 class RuntimeServer(grpcpb.RuntimeServicer):
     agent: Agent
+    tracer: trace.Tracer
 
-    def __init__(self, agent: Agent):
+    def __init__(self, agent: Agent, tracer: trace.Tracer):
         self.agent = agent
+        self.tracer = tracer
 
     @override
     async def InvokeAgent(
@@ -75,13 +81,25 @@ class RuntimeServer(grpcpb.RuntimeServicer):
         request: pb.InvokeAgentRequest,
         context: grpc.aio.ServicerContext[pb.InvokeAgentResponse, pb.InvokeAgentResponse],
     ) -> pb.InvokeAgentResponse:
+        trace_ctx = None
+        if request.HasField("trace_context"):
+            span_context = trace.SpanContext(
+                trace_id=int(request.trace_context.trace_id, 16),
+                span_id=int(request.trace_context.span_id, 16),
+                is_remote=True,
+                trace_flags=trace.TraceFlags(int(request.trace_context.trace_flags, 16)),
+            )
+            trace_ctx = trace.set_span_in_context(trace.NonRecordingSpan(span_context))
+        spans: list[tracesdk.ReadableSpan] = []
+        token = current_spans_context_var.set(spans)
         try:
             payload: str
             if request.message.WhichOneof("payload") == "structured":
                 payload = _serialize_payload(request.message.structured)
             else:
                 payload = request.message.serialized.decode("utf-8")
-            output = await self.agent.run(input=payload)
+            with self.tracer.start_as_current_span("agent_invoke"):
+                output = await self.agent.run(input=payload)
             if isinstance(output, BaseModel):
                 output = output.model_dump_json()
             elif not isinstance(output, str):
@@ -91,11 +109,14 @@ class RuntimeServer(grpcpb.RuntimeServicer):
                     serialized=output.encode("utf-8"),
                     metadata=request.message.metadata,
                 ),
+                trace=pb.Trace(spans=convert_spans(spans)) if trace_ctx else None,
             )
         except Exception as e:
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details(str(e))
             raise
+        finally:
+            current_spans_context_var.reset(token)
 
 
 async def serve_main(runtime_server: RuntimeServer):

@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 from contextlib import asynccontextmanager
-from pathlib import Path
+from opentelemetry import trace
 from typing import Any, override
+import json
 
 from mcp import ClientSession, Tool as MCPToolDef
 from mcp.client.sse import sse_client
@@ -76,6 +76,10 @@ class SSEMCPEndpoint(MCPEndpoint):
         super().__init__(cache_enabled)
         self.url = url
 
+    @property
+    def headers(self) -> dict[str, Any]:
+        return {}
+
 
 class WebsocketMCPEndpoint(MCPEndpoint):
     """
@@ -96,27 +100,6 @@ class WebsocketMCPEndpoint(MCPEndpoint):
         self.url = url
 
 
-class RPKMCPEndpoint(StdioMCPEndpoint):
-    """
-    A MCP endpoint that runs a local `rpk connect mcp-server` in a directory
-    communicating over stdio.
-    """
-
-    def __init__(self, directory: Path | str | None, cache_tools: bool = True):
-        super().__init__(
-            params=StdioServerParameters(
-                command="redpanda-connect",
-                args=["mcp-server", "."],
-                env={**os.environ},
-                cwd=directory,
-            ),
-            cache_enabled=cache_tools,
-        )
-
-
-# TODO(rockwood): Add support for RedpandaCloudPipelineMCPServer
-
-
 @asynccontextmanager
 async def mcp_client(server: MCPEndpoint):
     """
@@ -127,7 +110,7 @@ async def mcp_client(server: MCPEndpoint):
             async with ClientSession(read, write) as client:
                 yield MCPClient(server, client)
     elif isinstance(server, SSEMCPEndpoint):
-        async with sse_client(server.url) as (read, write):
+        async with sse_client(server.url, server.headers) as (read, write):
             async with ClientSession(read, write) as client:
                 yield MCPClient(server, client)
     elif isinstance(server, WebsocketMCPEndpoint):
@@ -201,4 +184,7 @@ class MCPTool(Tool):
 
     @override
     async def __call__(self, args: dict[str, Any]) -> Any:
-        return await self._client.call_tool(self.name, args)
+        with trace.get_tracer("redpanda.agents").start_as_current_span("tool_call") as span:
+            span.set_attribute("name", self.name)
+            span.set_attribute("arguments", json.dumps(args))
+            return await self._client.call_tool(self.name, args)
