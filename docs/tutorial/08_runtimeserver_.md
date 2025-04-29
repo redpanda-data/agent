@@ -1,6 +1,6 @@
-# Chapter 8: RuntimeServer
+# Chapter 7: RuntimeServer
 
-In [Chapter 7: mcp_client](07_mcp_client_.md), we learned how to tap into an existing server that hosts tools or services. But what if you want others to tap into your Agent in the same way—via a simple, well-defined interface? That’s exactly where “RuntimeServer” shines.
+In [Chapter 6: mcp_client](07_mcp_client_.md), we learned how to tap into an existing server that hosts tools or services. But what if you want others to tap into your Agent in the same way—via a simple, well-defined interface? That’s exactly where “RuntimeServer” shines.
 
 Imagine you have an Agent with all sorts of logic or tooling behind it, and you want to let an external system send requests. The external system might not speak Python, or it might be on a totally different tech stack. By using RuntimeServer, you can expose your Agent as a gRPC service—letting outside callers invoke it in real time, just like a translator who relays messages back and forth.
 

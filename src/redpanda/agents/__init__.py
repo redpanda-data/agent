@@ -16,7 +16,6 @@
 from ._agent import Agent, AgentHooks
 from ._mcp import (
     MCPEndpoint,
-    RPKMCPEndpoint,
     SSEMCPEndpoint,
     StdioMCPEndpoint,
     WebsocketMCPEndpoint,
@@ -31,5 +30,4 @@ __all__ = [
     "StdioMCPEndpoint",
     "SSEMCPEndpoint",
     "WebsocketMCPEndpoint",
-    "RPKMCPEndpoint",
 ]

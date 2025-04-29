@@ -1,0 +1,43 @@
+label: 'search_gdrive'
+processors:
+  - try:
+    - google_drive_search:
+        query: '${!content().string()}'
+        include_label_ids: 'oIdmLNhUH8dpdzJQB0SNjIcInfOVpYAt17aSNNEbbFcb'
+    - mapping: |
+          let selection = this.labelInfo.labels.0.fields.3F4B332E7C.selection.or([])
+          let internal_label_id = "B5AE921642"
+          let public_label_id = "86A5E75E81"
+          root = if $selection.any(s -> [$internal_label_id, $public_label_id].contains(s)) {
+            this.with("id", "name", "mimeType")
+          } else {
+            deleted()
+          }
+    - branch:
+        result_map: 'root.contents = content().string()'
+        processors:
+          - google_drive_download:
+              file_id: "${!this.id}"
+              mime_type: "${!this.mimeType}"
+    - mapping: |
+        root = this.format_json()
+  - catch:
+    - log:
+        message: "there was an error searching for these files: ${!error()}"
+meta:
+  mcp:
+    enabled: true
+    description: >
+      This tool allows for searching google drive to find files.
+      The value of this pipeline is a Google Drive Search query.
+      Queries are in the form `query_term operator values`.
+      Example queries are as follows:
+
+      name = 'hello'
+      name contains 'foo'
+      fullText contains 'important'
+      fullText contains '"hello world"'
+      starred = true and modifiedTime > '2012-06-04T12:00:00'
+      mimeType = 'application/vnd.google-apps.document'
+      visibility = 'limited'
+

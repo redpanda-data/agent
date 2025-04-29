@@ -13,9 +13,29 @@
 # limitations under the License.
 
 import os
+from typing import Any, final, override
+
+from opentelemetry import trace
+from opentelemetry.sdk import trace as tracesdk
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
 from redpanda.agents import Agent, SSEMCPEndpoint
-from redpanda.runtime._grpc import RuntimeServer, serve_main
+
+from ._grpc import RuntimeServer, serve_main
+from ._otel import PassthroughTraceCollector
+
+
+@final
+class _TracingSSEMCPEndpoint(SSEMCPEndpoint):
+    _propagator = TraceContextTextMapPropagator()
+
+    @property
+    @override
+    def headers(self) -> dict[str, Any]:
+        headers: dict[str, Any] = {}
+        self._propagator.inject(headers)
+        return headers
 
 
 async def serve(agent: Agent) -> None:
@@ -27,10 +47,13 @@ async def serve(agent: Agent) -> None:
     Args:
         agent: The agent to serve.
     """
+    provider = tracesdk.TracerProvider()
+    trace.set_tracer_provider(provider)
+    provider.add_span_processor(SimpleSpanProcessor(PassthroughTraceCollector()))
     addr = os.getenv("REDPANDA_CONNECT_AGENT_RUNTIME_MCP_SERVER")
     if addr:
-        agent.mcp.append(SSEMCPEndpoint(addr))
-    server = RuntimeServer(agent)
+        agent.mcp.append(_TracingSSEMCPEndpoint(addr))
+    server = RuntimeServer(agent, trace.get_tracer("redpanda.runtime"))
     await serve_main(server)
 
 

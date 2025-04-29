@@ -24,7 +24,9 @@ from litellm.types.utils import (  # pyright: ignore[reportMissingTypeStubs]
     ChatCompletionMessageToolCall,
     Message,
     StreamingChoices,
+    Usage,
 )
+from opentelemetry import trace
 from pydantic import BaseModel
 
 from ._mcp import MCPClient, MCPEndpoint, mcp_client
@@ -186,15 +188,7 @@ class Agent:
             if self.instructions:
                 messages = [{"role": "system", "content": self.instructions}] + messages
             while True:
-                model_resp = await acompletion(
-                    model=self.model,
-                    response_format=self.response_format,
-                    messages=messages,
-                    tools=tool_defs,
-                    **self.parameters,
-                )
-                if isinstance(model_resp, CustomStreamWrapper):
-                    raise Exception("unexpected response type of CustomStreamWrapper")
+                model_resp = await self._invoke_llm(messages, tool_defs)
                 choice_resp = model_resp.choices[-1]
                 if isinstance(choice_resp, StreamingChoices):
                     raise Exception("unexpected streaming response type")
@@ -209,6 +203,48 @@ class Agent:
                     output = self.response_format.model_validate_json(output)
                 await self.hooks.on_end(self, output)
                 return output
+
+    async def _invoke_llm(
+        self, messages: list[dict[str, str] | Message], tool_defs: list[dict[str, Any]]
+    ):
+        with trace.get_tracer("redpanda.agent").start_as_current_span("invoke_llm") as span:
+            span.set_attribute("model", self.model)
+            span.set_attribute(
+                "messages",
+                json.dumps([m.model_dump() if isinstance(m, BaseModel) else m for m in messages]),
+            )
+            resp = await acompletion(
+                model=self.model,
+                response_format=self.response_format,
+                messages=messages,
+                tools=tool_defs,
+                **self.parameters,
+            )
+            if isinstance(resp, CustomStreamWrapper):
+                raise Exception("unexpected response type of CustomStreamWrapper")
+            if hasattr(resp, "usage") and isinstance(resp.usage, Usage):  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
+                usage = resp.usage  # pyright: ignore[reportAttributeAccessIssue]
+                span.set_attribute("completion_tokens", usage.completion_tokens)
+                span.set_attribute("prompt_tokens", usage.prompt_tokens)
+                span.set_attribute("total_tokens", usage.total_tokens)
+                if usage.completion_tokens_details:
+                    ctd = usage.completion_tokens_details
+                    if ctd.accepted_prediction_tokens:
+                        span.set_attribute(
+                            "accepted_prediction_tokens", ctd.accepted_prediction_tokens
+                        )
+                    if ctd.rejected_prediction_tokens:
+                        span.set_attribute(
+                            "rejected_reasoning_tokens", ctd.rejected_prediction_tokens
+                        )
+                    if ctd.reasoning_tokens:
+                        span.set_attribute("reasoning_tokens", ctd.reasoning_tokens)
+                if usage.prompt_tokens_details:
+                    ptd = usage.prompt_tokens_details
+                    if ptd.cached_tokens:
+                        span.set_attribute("cached_tokens", ptd.cached_tokens)
+            span.set_attribute("response", json.dumps([m.model_dump() for m in resp.choices]))
+            return resp
 
     async def _call_tools(
         self, tool_calls: list[ChatCompletionMessageToolCall], tools: dict[str, Tool]
