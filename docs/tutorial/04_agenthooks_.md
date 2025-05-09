@@ -50,6 +50,7 @@ Let’s attach our `MyLoggingHooks` to an Agent. Now, whenever the Agent decides
 
 ```python
 # main.py
+import asyncio
 from redpanda.agents import Agent
 from custom_hooks import MyLoggingHooks
 from number_cruncher_tool import NumberCruncher  # from previous chapters
@@ -62,8 +63,11 @@ my_agent = Agent(
 )
 
 # Run a sample query to see the hooks in action
-response = await my_agent.run("What is 3 + 4?")
-print("Final response:", response)
+async def run_agent():
+    response = await my_agent.run("What is 3 + 4?")
+    print("Final response:", response)
+
+asyncio.run(run_agent())
 ```
 
 What happens:  

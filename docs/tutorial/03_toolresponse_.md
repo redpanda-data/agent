@@ -87,6 +87,7 @@ Let’s create an Agent using our `PictureMaker` tool. Suppose we send the Agent
 
 ```python
 # main.py
+import asyncio
 from redpanda.agents import Agent
 from picture_maker_tool import PictureMaker
 
@@ -102,8 +103,11 @@ my_agent = Agent(
 )
 
 # 3) Run and see what happens
-response = await my_agent.run("Please generate me a picture of a small cat.")
-print(response)  # The Agent will eventually include text + image data in some manner
+async def run_agent():
+    response = await my_agent.run("Please generate me a picture of a small cat.")
+    print(response)  # The Agent will eventually include text + image data in some manner
+
+asyncio.run(run_agent())
 ```
 
 ### What Happens Behind the Scenes?

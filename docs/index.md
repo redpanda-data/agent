@@ -45,14 +45,15 @@ agents:
     # See them all at https://docs.redpanda.com/redpanda-connect/components/outputs/about/
     output:
       <output>
-    # See options here: https://docs.redpanda.com/redpanda-connect/components/tracer/about/
+    # Configure Redpanda Connect to send tracing events to Jaeger, Open Telemetry collector and more.
+    # See options here: https://docs.redpanda.com/redpanda-connect/components/tracers/about/
     tracer:
         <tracer>
 ```
 
 ### `agents/*.py`
 
-Each agent recieves input from `input` and sends it's output to `output`. You can create an agent
+Each agent receives input from `input` and sends its output to `output`. You can create an agent
 by importing from `redpanda.agents`. Creating an `Agent` looks like:
 
 ```python
@@ -62,6 +63,8 @@ my_agent = Agent(
     instructions="These are your instructions - good luck!",
 )
 ```
+
+In this example, OpenAI GPT-4o is configured and requires you to set `OPENAI_API_KEY` as an environment variable.
 
 Once you've created the agent, you pass it off to the runtime to handle messages in the pipeline like so:
 
