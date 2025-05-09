@@ -6,7 +6,7 @@ In the [previous chapter: AgentHooks](04_agenthooks_.md), we saw how to track ke
 
 ## 1. Why MCPEndpoint?
 
-Sometimes, your Agent might not have all the tools it needs locally. Or maybe you want to delegate tasks to a remote service. MCPEndpoint is like creating a “phone line” for your Agent to talk to any external MCP (Multi-Channel Processing?) server, whether it’s running on your local machine or out on the internet.
+Sometimes, your Agent might not have all the tools it needs locally. Or maybe you want to delegate tasks to a remote service. MCPEndpoint is like creating a “phone line” for your Agent to talk to any external MCP (Model Context Protocol) server, whether it’s running on your local machine or out on the internet.
 
 For example:
 • You can connect via standard input/output (like launching a program and talking with it).  

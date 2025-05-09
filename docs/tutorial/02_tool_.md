@@ -85,6 +85,7 @@ Imagine we have an Agent that wants to handle math questions. Let’s register o
 
 ```python
 # main.py
+import asyncio
 from redpanda.agents import Agent
 from number_cruncher_tool import NumberCruncher
 
@@ -100,8 +101,11 @@ my_agent = Agent(
 )
 
 # Agent usage
-response = await my_agent.run("What is the product of 3 and 4?")
-print(response)
+async def run_agent():
+    response = await my_agent.run("What is the product of 3 and 4?")
+    print(response)
+
+asyncio.run(run_agent())
 ```
 
 ### Explanation of What Happens

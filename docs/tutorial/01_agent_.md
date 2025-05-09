@@ -24,6 +24,7 @@ Below is a short snippet showing how we can instantiate and use an Agent:
 
 ```python
 # In a file like main.py
+import asyncio
 from redpanda.agents import Agent
 
 # Create an agent with minimal setup
@@ -34,8 +35,11 @@ my_agent = Agent(
 )
 
 # Now let's ask something
-response = await my_agent.run("Hello Agent, what's your favorite color?")
-print(response)  # It will print a response based on the language model
+async def run_agent():
+   response = asyncio.run(my_agent.run("Hello Agent, what's your favorite color?"))
+   print(response)  # It will print a response based on the language model
+
+asyncio.run(run_agent())
 ```
 
 Explanation of the snippet:
