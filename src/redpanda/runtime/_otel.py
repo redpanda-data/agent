@@ -23,7 +23,7 @@ from opentelemetry.sdk import trace as tracesdk
 from opentelemetry.sdk.trace import export as traceexport
 from opentelemetry.util import types as oteltypes
 
-from redpanda.runtime.proto import runtime_pb2 as pb
+from redpanda.runtime.v1alpha1 import agent_pb2 as pb, message_pb2 as msg_pb
 
 
 def _proto_timestamp_from_time_ns(time_ns: int | None) -> PbTimestamp:
@@ -33,12 +33,12 @@ def _proto_timestamp_from_time_ns(time_ns: int | None) -> PbTimestamp:
     return ts
 
 
-def _convert_span_attributes(attrs: oteltypes.Attributes) -> dict[str, pb.Value]:
+def _convert_span_attributes(attrs: oteltypes.Attributes) -> dict[str, msg_pb.Value]:
     if attrs is None:
         return {}
-    pb_attrs: dict[str, pb.Value] = {}
+    pb_attrs: dict[str, msg_pb.Value] = {}
     for k, v in attrs.items():
-        pb_v = pb.Value()
+        pb_v = msg_pb.Value()
         if isinstance(v, str):
             pb_v.string_value = v
         elif isinstance(v, bool):

@@ -20,7 +20,7 @@ import abc
 import collections.abc
 import grpc
 import grpc.aio
-import redpanda.runtime.proto.runtime_pb2
+import redpanda.runtime.v1alpha1.agent_pb2
 import typing
 
 _T = typing.TypeVar("_T")
@@ -30,31 +30,31 @@ class _MaybeAsyncIterator(collections.abc.AsyncIterator[_T], collections.abc.Ite
 class _ServicerContext(grpc.ServicerContext, grpc.aio.ServicerContext):  # type: ignore[misc, type-arg]
     ...
 
-class RuntimeStub:
-    """`Runtime` is the service that provides the ability to invoke an agent."""
+class AgentRuntimeStub:
+    """`AgentRuntime` is the service that provides the ability to invoke an agent."""
 
     def __init__(self, channel: typing.Union[grpc.Channel, grpc.aio.Channel]) -> None: ...
     InvokeAgent: grpc.UnaryUnaryMultiCallable[
-        redpanda.runtime.proto.runtime_pb2.InvokeAgentRequest,
-        redpanda.runtime.proto.runtime_pb2.InvokeAgentResponse,
+        redpanda.runtime.v1alpha1.agent_pb2.InvokeAgentRequest,
+        redpanda.runtime.v1alpha1.agent_pb2.InvokeAgentResponse,
     ]
 
-class RuntimeAsyncStub:
-    """`Runtime` is the service that provides the ability to invoke an agent."""
+class AgentRuntimeAsyncStub:
+    """`AgentRuntime` is the service that provides the ability to invoke an agent."""
 
     InvokeAgent: grpc.aio.UnaryUnaryMultiCallable[
-        redpanda.runtime.proto.runtime_pb2.InvokeAgentRequest,
-        redpanda.runtime.proto.runtime_pb2.InvokeAgentResponse,
+        redpanda.runtime.v1alpha1.agent_pb2.InvokeAgentRequest,
+        redpanda.runtime.v1alpha1.agent_pb2.InvokeAgentResponse,
     ]
 
-class RuntimeServicer(metaclass=abc.ABCMeta):
-    """`Runtime` is the service that provides the ability to invoke an agent."""
+class AgentRuntimeServicer(metaclass=abc.ABCMeta):
+    """`AgentRuntime` is the service that provides the ability to invoke an agent."""
 
     @abc.abstractmethod
     def InvokeAgent(
         self,
-        request: redpanda.runtime.proto.runtime_pb2.InvokeAgentRequest,
+        request: redpanda.runtime.v1alpha1.agent_pb2.InvokeAgentRequest,
         context: _ServicerContext,
-    ) -> typing.Union[redpanda.runtime.proto.runtime_pb2.InvokeAgentResponse, collections.abc.Awaitable[redpanda.runtime.proto.runtime_pb2.InvokeAgentResponse]]: ...
+    ) -> typing.Union[redpanda.runtime.v1alpha1.agent_pb2.InvokeAgentResponse, collections.abc.Awaitable[redpanda.runtime.v1alpha1.agent_pb2.InvokeAgentResponse]]: ...
 
-def add_RuntimeServicer_to_server(servicer: RuntimeServicer, server: typing.Union[grpc.Server, grpc.aio.Server]) -> None: ...
+def add_AgentRuntimeServicer_to_server(servicer: AgentRuntimeServicer, server: typing.Union[grpc.Server, grpc.aio.Server]) -> None: ...
