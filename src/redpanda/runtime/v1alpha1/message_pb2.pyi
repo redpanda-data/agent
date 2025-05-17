@@ -19,6 +19,7 @@ limitations under the License.
 import builtins
 import collections.abc
 import google.protobuf.descriptor
+import google.protobuf.duration_pb2
 import google.protobuf.internal.containers
 import google.protobuf.internal.enum_type_wrapper
 import google.protobuf.message
@@ -108,7 +109,7 @@ global___ListValue = ListValue
 @typing.final
 class Value(google.protobuf.message.Message):
     """`Value` represents a dynamically typed value which can be used to represent
-    a value passed to an agent.
+    a value within a Redpanda Connect pipeline.
     """
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -154,164 +155,120 @@ class Value(google.protobuf.message.Message):
 global___Value = Value
 
 @typing.final
-class Message(google.protobuf.message.Message):
-    """Message represents a piece of structured data that flows through the runtime."""
+class Error(google.protobuf.message.Message):
+    """An error in the context of a data pipeline."""
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    SERIALIZED_FIELD_NUMBER: builtins.int
+    @typing.final
+    class NotConnected(google.protobuf.message.Message):
+        """NotConnected is returned by inputs and outputs when their Read or
+        Write methods are called and the connection that they maintain is lost.
+        This error prompts the upstream component to call Connect until the
+        connection is re-established.
+        """
+
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+        def __init__(
+            self,
+        ) -> None: ...
+
+    @typing.final
+    class EndOfInput(google.protobuf.message.Message):
+        """EndOfInput is returned by inputs that have exhausted their source of
+        data to the point where subsequent Read calls will be ineffective. This
+        error prompts the upstream component to gracefully terminate the
+        pipeline.
+        """
+
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+        def __init__(
+            self,
+        ) -> None: ...
+
+    MESSAGE_FIELD_NUMBER: builtins.int
+    BACKOFF_FIELD_NUMBER: builtins.int
+    NOT_CONNECTED_FIELD_NUMBER: builtins.int
+    END_OF_INPUT_FIELD_NUMBER: builtins.int
+    message: builtins.str
+    """The error message. If non empty, then the error to be "valid" and
+    if empty the error is ignored as if a success (due to proto3 empty
+    semantics).
+    """
+    @property
+    def backoff(self) -> google.protobuf.duration_pb2.Duration:
+        """BackOff is an error that plugins can optionally wrap another error with
+        which instructs upstream components to wait for a specified period of
+        time before retrying the errored call.
+
+        Only suppported by Connect methods in the Input and Output services.
+        """
+
+    @property
+    def not_connected(self) -> global___Error.NotConnected: ...
+    @property
+    def end_of_input(self) -> global___Error.EndOfInput: ...
+    def __init__(
+        self,
+        *,
+        message: builtins.str = ...,
+        backoff: google.protobuf.duration_pb2.Duration | None = ...,
+        not_connected: global___Error.NotConnected | None = ...,
+        end_of_input: global___Error.EndOfInput | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing.Literal["backoff", b"backoff", "detail", b"detail", "end_of_input", b"end_of_input", "not_connected", b"not_connected"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["backoff", b"backoff", "detail", b"detail", "end_of_input", b"end_of_input", "message", b"message", "not_connected", b"not_connected"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing.Literal["detail", b"detail"]) -> typing.Literal["backoff", "not_connected", "end_of_input"] | None: ...
+
+global___Error = Error
+
+@typing.final
+class Message(google.protobuf.message.Message):
+    """Message represents a piece of data or an event that flows through the
+    runtime.
+    """
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    BYTES_FIELD_NUMBER: builtins.int
     STRUCTURED_FIELD_NUMBER: builtins.int
     METADATA_FIELD_NUMBER: builtins.int
-    serialized: builtins.bytes
+    ERROR_FIELD_NUMBER: builtins.int
+    bytes: builtins.bytes
     @property
     def structured(self) -> global___Value: ...
     @property
     def metadata(self) -> global___StructValue: ...
+    @property
+    def error(self) -> global___Error: ...
     def __init__(
         self,
         *,
-        serialized: builtins.bytes = ...,
+        bytes: builtins.bytes = ...,
         structured: global___Value | None = ...,
         metadata: global___StructValue | None = ...,
+        error: global___Error | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["metadata", b"metadata", "payload", b"payload", "serialized", b"serialized", "structured", b"structured"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["metadata", b"metadata", "payload", b"payload", "serialized", b"serialized", "structured", b"structured"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing.Literal["payload", b"payload"]) -> typing.Literal["serialized", "structured"] | None: ...
+    def HasField(self, field_name: typing.Literal["bytes", b"bytes", "error", b"error", "metadata", b"metadata", "payload", b"payload", "structured", b"structured"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["bytes", b"bytes", "error", b"error", "metadata", b"metadata", "payload", b"payload", "structured", b"structured"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing.Literal["payload", b"payload"]) -> typing.Literal["bytes", "structured"] | None: ...
 
 global___Message = Message
 
 @typing.final
-class TraceContext(google.protobuf.message.Message):
+class MessageBatch(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    TRACE_ID_FIELD_NUMBER: builtins.int
-    SPAN_ID_FIELD_NUMBER: builtins.int
-    TRACE_FLAGS_FIELD_NUMBER: builtins.int
-    trace_id: builtins.str
-    span_id: builtins.str
-    trace_flags: builtins.str
+    MESSAGES_FIELD_NUMBER: builtins.int
+    @property
+    def messages(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Message]: ...
     def __init__(
         self,
         *,
-        trace_id: builtins.str = ...,
-        span_id: builtins.str = ...,
-        trace_flags: builtins.str = ...,
+        messages: collections.abc.Iterable[global___Message] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["span_id", b"span_id", "trace_flags", b"trace_flags", "trace_id", b"trace_id"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["messages", b"messages"]) -> None: ...
 
-global___TraceContext = TraceContext
-
-@typing.final
-class Trace(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    SPANS_FIELD_NUMBER: builtins.int
-    @property
-    def spans(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Span]: ...
-    def __init__(
-        self,
-        *,
-        spans: collections.abc.Iterable[global___Span] | None = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["spans", b"spans"]) -> None: ...
-
-global___Trace = Trace
-
-@typing.final
-class Span(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    @typing.final
-    class AttributesEntry(google.protobuf.message.Message):
-        DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-        KEY_FIELD_NUMBER: builtins.int
-        VALUE_FIELD_NUMBER: builtins.int
-        key: builtins.str
-        @property
-        def value(self) -> global___Value: ...
-        def __init__(
-            self,
-            *,
-            key: builtins.str = ...,
-            value: global___Value | None = ...,
-        ) -> None: ...
-        def HasField(self, field_name: typing.Literal["value", b"value"]) -> builtins.bool: ...
-        def ClearField(self, field_name: typing.Literal["key", b"key", "value", b"value"]) -> None: ...
-
-    SPAN_ID_FIELD_NUMBER: builtins.int
-    NAME_FIELD_NUMBER: builtins.int
-    START_TIME_FIELD_NUMBER: builtins.int
-    END_TIME_FIELD_NUMBER: builtins.int
-    ATTRIBUTES_FIELD_NUMBER: builtins.int
-    CHILD_SPANS_FIELD_NUMBER: builtins.int
-    span_id: builtins.str
-    name: builtins.str
-    @property
-    def start_time(self) -> google.protobuf.timestamp_pb2.Timestamp: ...
-    @property
-    def end_time(self) -> google.protobuf.timestamp_pb2.Timestamp: ...
-    @property
-    def attributes(self) -> google.protobuf.internal.containers.MessageMap[builtins.str, global___Value]: ...
-    @property
-    def child_spans(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Span]: ...
-    def __init__(
-        self,
-        *,
-        span_id: builtins.str = ...,
-        name: builtins.str = ...,
-        start_time: google.protobuf.timestamp_pb2.Timestamp | None = ...,
-        end_time: google.protobuf.timestamp_pb2.Timestamp | None = ...,
-        attributes: collections.abc.Mapping[builtins.str, global___Value] | None = ...,
-        child_spans: collections.abc.Iterable[global___Span] | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing.Literal["end_time", b"end_time", "start_time", b"start_time"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["attributes", b"attributes", "child_spans", b"child_spans", "end_time", b"end_time", "name", b"name", "span_id", b"span_id", "start_time", b"start_time"]) -> None: ...
-
-global___Span = Span
-
-@typing.final
-class InvokeAgentRequest(google.protobuf.message.Message):
-    """InvokeAgentRequest is the request message for the `InvokeAgent` method."""
-
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    MESSAGE_FIELD_NUMBER: builtins.int
-    TRACE_CONTEXT_FIELD_NUMBER: builtins.int
-    @property
-    def message(self) -> global___Message: ...
-    @property
-    def trace_context(self) -> global___TraceContext: ...
-    def __init__(
-        self,
-        *,
-        message: global___Message | None = ...,
-        trace_context: global___TraceContext | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing.Literal["message", b"message", "trace_context", b"trace_context"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["message", b"message", "trace_context", b"trace_context"]) -> None: ...
-
-global___InvokeAgentRequest = InvokeAgentRequest
-
-@typing.final
-class InvokeAgentResponse(google.protobuf.message.Message):
-    """InvokeAgentResponse is the response message for the `InvokeAgent` method."""
-
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    MESSAGE_FIELD_NUMBER: builtins.int
-    TRACE_FIELD_NUMBER: builtins.int
-    @property
-    def message(self) -> global___Message: ...
-    @property
-    def trace(self) -> global___Trace: ...
-    def __init__(
-        self,
-        *,
-        message: global___Message | None = ...,
-        trace: global___Trace | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing.Literal["message", b"message", "trace", b"trace"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["message", b"message", "trace", b"trace"]) -> None: ...
-
-global___InvokeAgentResponse = InvokeAgentResponse
+global___MessageBatch = MessageBatch

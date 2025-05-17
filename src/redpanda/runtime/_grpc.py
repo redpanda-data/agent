@@ -27,12 +27,16 @@ from opentelemetry.sdk import trace as tracesdk
 from pydantic import BaseModel
 
 from redpanda.agents import Agent
-from redpanda.runtime.proto import runtime_pb2 as pb, runtime_pb2_grpc as grpcpb
+from redpanda.runtime.v1alpha1 import (
+    agent_pb2 as pb,
+    agent_pb2_grpc as grpcpb,
+    message_pb2 as msg_pb,
+)
 
 from ._otel import convert_spans, current_spans_context_var
 
 
-def _serialize_payload(payload: pb.Value) -> str:
+def _serialize_payload(payload: msg_pb.Value) -> str:
     kind = payload.WhichOneof("kind")
     if kind == "bool_value":
         return "true" if payload.bool_value else "false"
@@ -67,7 +71,7 @@ def _serialize_payload(payload: pb.Value) -> str:
         raise ValueError(f"Unknown payload kind: {kind}")
 
 
-class RuntimeServer(grpcpb.RuntimeServicer):
+class RuntimeServer(grpcpb.AgentRuntimeServicer):
     agent: Agent
     tracer: trace.Tracer
 
@@ -97,7 +101,7 @@ class RuntimeServer(grpcpb.RuntimeServicer):
             if request.message.WhichOneof("payload") == "structured":
                 payload = _serialize_payload(request.message.structured)
             else:
-                payload = request.message.serialized.decode("utf-8")
+                payload = request.message.bytes.decode("utf-8")
             with self.tracer.start_as_current_span("agent_invoke", context=trace_ctx):
                 output = await self.agent.run(input=payload)
             if isinstance(output, BaseModel):
@@ -105,8 +109,8 @@ class RuntimeServer(grpcpb.RuntimeServicer):
             elif not isinstance(output, str):
                 output = json.dumps(output)
             return pb.InvokeAgentResponse(
-                message=pb.Message(
-                    serialized=output.encode("utf-8"),
+                message=msg_pb.Message(
+                    bytes=output.encode("utf-8"),
                     metadata=request.message.metadata,
                 ),
                 trace=pb.Trace(spans=convert_spans(spans)) if trace_ctx else None,
@@ -126,7 +130,7 @@ async def serve_main(runtime_server: RuntimeServer):
         health_pb2.HealthCheckResponse.ServingStatus.Value("SERVING"),
     )
     server = grpc.aio.server()
-    grpcpb.add_RuntimeServicer_to_server(
+    grpcpb.add_AgentRuntimeServicer_to_server(
         runtime_server,
         server,
     )
