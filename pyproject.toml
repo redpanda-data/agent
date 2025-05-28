@@ -11,7 +11,7 @@ dependencies = [
     "aiohttp>=3.11.16",
     "grpcio>=1.71.0",
     "grpcio-health-checking>=1.71.0",
-    "litellm>=1.63.14",
+    "litellm>=1.70.0",
     "mcp>=1.5.0",
     "opentelemetry-api>=1.32.1",
     "opentelemetry-sdk>=1.32.1",
@@ -45,7 +45,7 @@ redpanda = { workspace = true }
 [tool.ruff]
 line-length = 100
 target-version = "py39"
-exclude = ["proto"]
+exclude = ["v1alpha1"]
 
 [tool.ruff.lint]
 select = [
@@ -74,7 +74,7 @@ packages = ["src/redpanda"]
 
 [tool.pyright]
 exclude = [
-  "src/redpanda/runtime/proto/**",
+  "src/redpanda/runtime/v1alpha1/**",
   "**/__pycache__",
   "**/.*",
 ]
