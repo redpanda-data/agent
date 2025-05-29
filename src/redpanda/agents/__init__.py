@@ -18,6 +18,7 @@ from ._mcp import (
     MCPEndpoint,
     SSEMCPEndpoint,
     StdioMCPEndpoint,
+    StreamableHTTPMCPEndpoint,
     WebsocketMCPEndpoint,
 )
 from ._tools import Tool
@@ -30,4 +31,5 @@ __all__ = [
     "StdioMCPEndpoint",
     "SSEMCPEndpoint",
     "WebsocketMCPEndpoint",
+    "StreamableHTTPMCPEndpoint",
 ]
