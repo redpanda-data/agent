@@ -20,9 +20,9 @@ Agentic AI Demo:
 - ✅ gRPC plugin for the python agents
 - ✅ otel metrics for redpanda connect pipelines 
 - ✅ init template engine for new projects
+- ✅ otel metrics for python process
+- ✅ in-process multi agents
+- ✅ public docs (https://redpanda-data.github.io/agent/)
 - [ ] (partial in rpcn) audit logs sent to redpanda/kafka brokers from redpanda connect side
-- [ ] otel metrics for python process
 - [ ] durable promise execution w/ redpanda
-- [ ] in-process multi agents
-- [ ] public docs
  
