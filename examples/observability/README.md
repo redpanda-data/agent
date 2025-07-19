@@ -2,7 +2,14 @@
 
 This demo shows how to view open telemetry traces within your pipelines.
 
-First start a local [jaeger] instance like this:
+First generate an OPENAI API Key and set as an environment variable: https://platform.openai.com/docs/api-reference/introduction
+
+```
+export OPENAI_API_KEY= <API KEY>
+
+```
+
+Next start a local [jaeger] instance like this:
 
 ```
 docker run --rm --name jaeger \
