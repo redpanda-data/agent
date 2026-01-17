@@ -75,6 +75,7 @@ packages = ["src/redpanda"]
 [tool.pyright]
 exclude = [
   "src/redpanda/runtime/v1alpha1/**",
+  "examples/crewai-render-agent/**",
   "**/__pycache__",
   "**/.*",
 ]
